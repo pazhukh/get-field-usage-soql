@@ -16,7 +16,11 @@ yargs(hideBin(process.argv))
   
           let filesNameWhereFieldIsUsed = files.reduce((total, r) => {
             let fileContent = fs.readFileSync(r.path, 'utf-8');
-            if (fileContent.includes(field) && (!strict || !fileContent.includes(`<field>${object}.${field}</field>`))) {
+
+            let usedInFilter = fileContent.includes(`<column>${object}.${field}</column>`);
+            let usedInGrouping = fileContent.includes(`<groupingColumn>${object}.${field}</groupingColumn>`);
+
+            if (fileContent.includes(field) && (!strict || usedInFilter || usedInGrouping)) {
                 r.name = r.name.replace(`.${metadata}-meta.xml`, '');
                 total.push(r.name);
             }
